@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Delivery Booking Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    form { max-width: 600px; margin: auto; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
+    .section { margin-top: 30px; }
+    #response { margin-top: 30px; white-space: pre-wrap; background: #f4f4f4; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Delivery Booking Form</h2>
+  <form id="bookingForm">
+    
+    <!-- Customer Details -->
+    <div class="section">
+      <h3>Customer Details</h3>
+      <label for="customerName">Customer Name</label>
+      <input type="text" id="customerName" name="customerName" required>
+      
+      <label for="customerEmail">Customer Email</label>
+      <input type="email" id="customerEmail" name="customerEmail" required>
+      
+      <label for="customerPhone">Customer Phone</label>
+      <input type="text" id="customerPhone" name="customerPhone" required>
+      
+      <label for="customerAddress">Customer Address</label>
+      <input type="text" id="customerAddress" name="customerAddress" required>
+    </div>
+    
+    <!-- Delivery Details -->
+    <div class="section">
+      <h3>Delivery Details</h3>
+      <label for="senderName">Sender Name</label>
+      <input type="text" id="senderName" name="senderName" required>
+      
+      <label for="senderPhone">Sender Phone</label>
+      <input type="text" id="senderPhone" name="senderPhone" required>
+      
+      <label for="senderAddress">Sender Address</label>
+      <input type="text" id="senderAddress" name="senderAddress" required>
+      
+      <label for="orderValue">Order Value</label>
+      <input type="text" id="orderValue" name="orderValue" required>
+      
+      <label for="numberOfParcels">Number of Parcels</label>
+      <input type="number" id="numberOfParcels" name="numberOfParcels" required>
+      
+      <label for="unitWeight">Unit Weight</label>
+      <input type="text" id="unitWeight" name="unitWeight" required>
+    </div>
+    
+    <!-- Item Details -->
+    <div class="section">
+      <h3>Item Details</h3>
+      <label for="itemDescription">Item Description</label>
+      <input type="text" id="itemDescription" name="itemDescription" required>
+      
+      <label for="itemQuantity">Item Quantity</label>
+      <input type="number" id="itemQuantity" name="itemQuantity" required>
+      
+      <label for="itemWeight">Item Weight</label>
+      <input type="text" id="itemWeight" name="itemWeight" required>
+      
+      <label for="itemValue">Item Value</label>
+      <input type="text" id="itemValue" name="itemValue" required>
+    </div>
+    
+    <button type="submit">Submit Booking</button>
+  </form>
+  
+  <div id="response"></div>
+  
+  <script>
+    document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      // Construct the payload for the booking
+      const payload = {
+        customer_detail: {
+          customer_name: document.getElementById('customerName').value,
+          customer_email: document.getElementById('customerEmail').value,
+          customer_phone_number: document.getElementById('customerPhone').value,
+          customer_phone_code: "234", // Adjust if necessary
+          customer_address: document.getElementById('customerAddress').value
+        },
+        delivery_detail: {
+          sender_name: document.getElementById('senderName').value,
+          sender_phone: document.getElementById('senderPhone').value,
+          sender_phonecode: "234",
+          sender_address: document.getElementById('senderAddress').value,
+          delivery_total_order_value: document.getElementById('orderValue').value,
+          delivery_number_of_parcels: parseInt(document.getElementById('numberOfParcels').value, 10),
+          delivery_unit_weight: document.getElementById('unitWeight').value
+        },
+        items: [
+          {
+            item_description: document.getElementById('itemDescription').value,
+            item_quantity: parseInt(document.getElementById('itemQuantity').value, 10),
+            item_weight: document.getElementById('itemWeight').value,
+            item_value: document.getElementById('itemValue').value
+          }
+        ]
+      };
+      
+      try {
+        const response = await fetch('/api/book-delivery', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('response').innerText = 'Error: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
